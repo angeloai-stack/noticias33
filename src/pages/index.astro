@@ -1,0 +1,92 @@
+---
+import Base from "../layouts/Base.astro";
+import Newsletter from "../components/Newsletter";
+import { HeroNews, FeatureNews, NewsRow, PanelNews } from "../components/cards";
+import { getPosts } from "../lib/wordpress";
+
+const posts = await getPosts({ perPage: 20 });
+
+const hero = posts[0];
+const feature = posts[1];
+const topRows = posts.slice(2, 8);
+const panel = posts.slice(8, 11);
+---
+
+<Base>
+  {
+    posts.length === 0 ? (
+      <main class="mx-auto max-w-360 px-6 py-16 lg:px-12">
+        <div class="border border-n33-ad bg-white p-12 text-center">
+          <h1 class="text-2xl font-bold">Noticias 33 está casi listo</h1>
+          <p class="mt-4">
+            No se pudieron cargar noticias desde WordPress. Verifica que la
+            variable <code class="bg-n33-bg px-1">WP_URL</code> del archivo
+            <code class="bg-n33-bg px-1">.env</code> apunte a tu instalación de
+            WordPress y que existan entradas publicadas.
+          </p>
+        </div>
+      </main>
+    ) : (
+      <>
+        <main class="mx-auto max-w-360 px-6 py-10 lg:px-12">
+          <div class="grid gap-10 lg:grid-cols-[116px_1fr]">
+            {/* Publicidad lateral izquierda */}
+            <aside class="hidden lg:block">
+              <div class="sticky top-6 flex h-150 items-center justify-center rounded-xl bg-n33-ad">
+                <span class="text-lg">Publicidad</span>
+              </div>
+            </aside>
+
+            <div>
+              {/* Noticias de relevancia media alta */}
+              {topRows.length > 0 && (
+                <section class="grid gap-x-12 gap-y-8 md:grid-cols-2">
+                  {topRows.map((post) => (
+                    <NewsRow post={post} />
+                  ))}
+                </section>
+              )}
+
+              {/* Destacada de sección (Local) */}
+              {feature && (
+                <section class="mt-12">
+                  <FeatureNews post={feature} />
+                </section>
+              )}
+
+              <hr class="my-12 border-n33-text/40" />
+
+              {/* Noticia principal + columna derecha */}
+              <div class="grid gap-10 lg:grid-cols-[1fr_253px]">
+                {hero && <HeroNews post={hero} />}
+                <aside class="flex flex-col gap-8">
+                  <div class="flex h-92 items-center justify-center rounded-xl bg-n33-ad">
+                    <span class="text-lg">Publicidad</span>
+                  </div>
+                </aside>
+              </div>
+
+              {/* Publicidad horizontal */}
+              <div class="mt-14 flex h-36.25 items-center justify-center rounded-xl bg-n33-ad">
+                <span class="text-lg">Publicidad</span>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* Panel azul: relevancia media baja */}
+        {panel.length > 0 && (
+          <section class="mx-auto max-w-327.5 px-6 pb-14">
+            <div class="flex flex-col gap-12 rounded-[41px] bg-n33-blue px-8 py-12 md:px-20">
+              {panel.map((post) => (
+                <PanelNews post={post} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        <Newsletter />
+      </>
+    )
+  }
+</Base>

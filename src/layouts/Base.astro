@@ -1,0 +1,35 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { getPosts } from "../lib/wordpress";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Noticias 33 — Información al momento",
+  description = "Noticias 33 (N33): portal de noticias con la información más reciente.",
+} = Astro.props;
+
+const [ultimaNota] = await getPosts({ perPage: 1 });
+const ticker = ultimaNota?.title.replace(/<[^>]*>/g, "");
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-n33-bg font-ui text-n33-text">
+    <Header ticker={ticker} />
+    <slot />
+    <Footer />
+  </body>
+</html>
