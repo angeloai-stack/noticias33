@@ -34,9 +34,9 @@ const { section, posts, description } = Astro.props;
 ---
 
 <Base title={`${section.name} — Noticias 33`} description={description}>
-  <main class="mx-auto max-w-300 px-6 py-10 lg:px-12">
+  <main class="mx-auto max-w-300 px-4 py-8 sm:px-6 md:py-10 lg:px-12">
     <h1
-      class="inline-block bg-n33-blue px-5 py-1.5 text-2xl font-bold uppercase text-white [clip-path:polygon(0_0,100%_0,calc(100%-16px)_100%,0_100%)]"
+      class="inline-block bg-n33-blue px-5 py-1.5 text-xl font-bold uppercase text-white [clip-path:polygon(0_0,100%_0,calc(100%-16px)_100%,0_100%)] md:text-2xl"
     >
       {section.name}
     </h1>
@@ -46,9 +46,9 @@ const { section, posts, description } = Astro.props;
           Todavía no hay noticias en esta sección.
         </p>
       ) : (
-        <section class="mt-10 grid gap-x-12 gap-y-8 md:grid-cols-2">
-          {posts.map((post) => (
-            <NewsRow post={post} />
+        <section class="mt-8 grid gap-x-12 gap-y-6 md:mt-10 md:grid-cols-2 md:gap-y-8">
+          {posts.map((post, i) => (
+            <NewsRow post={post} delay={(i % 6) * 80} />
           ))}
         </section>
       )

@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 import Analytics from "@vercel/analytics/astro";
 import Header from "../components/Header";
 import NavMenu from "../components/NavMenu";
@@ -28,6 +29,10 @@ const ticker = ultimaNota?.title.replace(/<[^>]*>/g, "");
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
+    <script is:inline>
+      document.documentElement.classList.add("js");
+    </script>
+    <ClientRouter />
     <Analytics />
   </head>
   <body class="bg-n33-bg font-ui text-n33-text">
@@ -35,5 +40,26 @@ const ticker = ultimaNota?.title.replace(/<[^>]*>/g, "");
     <NavMenu client:load />
     <slot />
     <Footer />
+    <script>
+      // Revela con fade-up los elementos [data-reveal] al entrar en pantalla
+      function initReveal() {
+        const elements = document.querySelectorAll("[data-reveal]:not(.is-visible)");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
+        );
+        elements.forEach((el) => observer.observe(el));
+      }
+
+      initReveal();
+      document.addEventListener("astro:page-load", initReveal);
+    </script>
   </body>
 </html>

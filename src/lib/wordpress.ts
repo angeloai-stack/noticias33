@@ -27,6 +27,7 @@ export interface WPPost {
   excerpt: string;
   content: string;
   author: string;
+  authorAvatar: string | null;
   categories: WPCategory[];
   featuredImage: WPImage | null;
 }
@@ -43,6 +44,7 @@ function mapPost(raw: any): WPPost {
     excerpt: raw.excerpt?.rendered ?? "",
     content: raw.content?.rendered ?? "",
     author: raw._embedded?.author?.[0]?.name ?? "Redacción N33",
+    authorAvatar: raw._embedded?.author?.[0]?.avatar_urls?.["96"] ?? null,
     categories: terms
       .filter((t) => t?.taxonomy === "category")
       .map((t) => ({

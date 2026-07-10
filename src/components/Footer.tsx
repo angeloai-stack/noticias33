@@ -16,10 +16,10 @@ export default function Footer() {
 
   return (
     <footer className="bg-n33-pink font-ui text-white">
-      <div className="mx-auto max-w-360 px-6 py-12 lg:px-12">
-        <nav className="flex flex-wrap gap-x-10 gap-y-2 text-[1.2rem] font-bold">
+      <div className="mx-auto max-w-360 px-4 py-8 sm:px-6 md:py-12 lg:px-12">
+        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-base font-bold sm:gap-x-10 sm:text-[1.2rem]">
           {links.map((link) => (
-            <a key={link.name} href={link.href} className="hover:underline">
+            <a key={link.name} href={link.href} className="link-underline">
               {link.name}
             </a>
           ))}
@@ -29,9 +29,9 @@ export default function Footer() {
 
         <div className="flex flex-wrap items-start justify-between gap-8">
           <div>
-            <nav className="flex flex-wrap gap-x-10 gap-y-2 text-[1.2rem] font-light">
+            <nav className="flex flex-wrap gap-x-6 gap-y-2 text-base font-light sm:gap-x-10 sm:text-[1.2rem]">
               {SECONDARY_LINKS.map((name) => (
-                <a key={name} href="#" className="hover:underline">
+                <a key={name} href="#" className="link-underline">
                   {name}
                 </a>
               ))}
@@ -39,17 +39,17 @@ export default function Footer() {
             <img
               src="/brand/logo-footer.png"
               alt="N33"
-              className="mt-10 h-24 w-auto"
+              className="mt-8 h-16 w-auto sm:h-20 md:mt-10 md:h-24"
             />
           </div>
           <img
             src="/brand/social-icons.svg"
             alt="Redes sociales de Noticias 33"
-            className="mt-auto h-10 w-auto"
+            className="mt-auto h-8 w-auto sm:h-10"
           />
         </div>
 
-        <div className="mt-10 flex flex-wrap justify-between gap-4 text-[1.1rem] font-light">
+        <div className="mt-8 flex flex-wrap justify-between gap-2 text-sm font-light sm:text-base md:mt-10 md:text-[1.1rem]">
           <span>® Noticias 33 · www.noticias33.com · {year}</span>
           <span>Todos los derechos reservados</span>
         </div>

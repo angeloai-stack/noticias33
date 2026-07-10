@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SECTIONS } from "../lib/sections";
 
 /**
@@ -9,15 +9,28 @@ import { SECTIONS } from "../lib/sections";
 export default function NavMenu() {
   const [open, setOpen] = useState(false);
 
+  // El botón hamburguesa del header (estático) también abre/cierra el menú
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if ((e.target as HTMLElement).closest("#n33-menu-toggle")) {
+        setOpen((o) => !o);
+      }
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
+
   return (
     <nav className="bg-white font-ui shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
-      <div className="mx-auto flex max-w-360 items-start gap-8 px-6 py-3.5 lg:px-12">
+      <div className="mx-auto flex max-w-360 items-start gap-4 px-4 py-3 sm:gap-8 sm:px-6 sm:py-3.5 lg:px-12">
         <button
           type="button"
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-label={open ? "Cerrar menú" : "Abrir menú"}
-          className="mt-0.5 shrink-0 cursor-pointer"
+          className={`-m-2 shrink-0 cursor-pointer p-2 transition-transform duration-300 ${
+            open ? "rotate-90" : "rotate-0"
+          }`}
         >
           {open ? (
             <svg viewBox="0 0 24 24" className="size-6" aria-hidden="true">
@@ -43,21 +56,21 @@ export default function NavMenu() {
         </button>
 
         {open ? (
-          <div className="grid flex-1 grid-cols-2 gap-x-6 gap-y-8 pb-4 sm:grid-cols-3 lg:grid-cols-9">
+          <div className="menu-panel-enter grid flex-1 grid-cols-2 gap-x-4 gap-y-6 pb-4 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-8 lg:grid-cols-9">
             {SECTIONS.map((section) => (
               <div key={section.slug}>
                 <a
                   href={`/categoria/${section.slug}/`}
-                  className="text-lg font-bold text-n33-blue hover:underline"
+                  className="link-underline text-base font-bold text-n33-blue sm:text-lg"
                 >
                   {section.name}
                 </a>
-                <ul className="mt-4 space-y-3">
+                <ul className="mt-3 space-y-2.5 sm:mt-4 sm:space-y-3">
                   {section.subsections.map((sub) => (
                     <li key={sub}>
                       <a
                         href={`/categoria/${section.slug}/`}
-                        className="text-[15px] leading-tight text-n33-blue hover:underline"
+                        className="text-sm leading-tight text-n33-blue transition-colors duration-200 hover:text-n33-pink sm:text-[15px]"
                       >
                         {sub}
                       </a>
@@ -68,12 +81,12 @@ export default function NavMenu() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-1 items-center gap-8 overflow-x-auto lg:justify-center">
+          <div className="flex flex-1 items-center gap-6 overflow-x-auto scrollbar-none sm:gap-8 lg:justify-center">
             {SECTIONS.map((section) => (
               <a
                 key={section.slug}
                 href={`/categoria/${section.slug}/`}
-                className="whitespace-nowrap text-lg font-bold text-n33-blue hover:underline"
+                className="link-underline whitespace-nowrap text-base font-bold text-n33-blue sm:text-lg"
               >
                 {section.name}
               </a>

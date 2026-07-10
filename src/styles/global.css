@@ -10,6 +10,111 @@
   --font-body: Inter, "Segoe UI", system-ui, sans-serif;
 }
 
+/* ===== Animaciones y efectos ===== */
+
+/* Revelado al hacer scroll (activado por IntersectionObserver en Base.astro).
+   Solo se ocultan los elementos si hay JS (clase .js en <html>): sin JS todo es visible. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+/* Variante: entra deslizándose desde la derecha */
+html.js [data-reveal="right"] {
+  transform: translateX(90px);
+  transition:
+    opacity 0.9s ease-out,
+    transform 0.9s ease-out;
+}
+
+html.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Ticker de noticias en movimiento continuo; se pausa al pasar el cursor */
+.ticker-viewport {
+  overflow: hidden;
+}
+
+.ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: ticker 30s linear infinite;
+}
+
+.ticker-viewport:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* Subrayado animado para enlaces de navegación */
+.link-underline {
+  position: relative;
+}
+
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Entrada del panel del menú desplegable */
+.menu-panel-enter {
+  animation: fade-down 0.3s ease both;
+}
+
+@keyframes fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Accesibilidad: sin movimiento para quien lo pida */
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .ticker-track {
+    animation: none;
+    padding-left: 0;
+  }
+
+  .menu-panel-enter {
+    animation: none;
+  }
+}
+
 /* Contenido HTML que llega renderizado desde WordPress */
 .wp-content {
   font-family: var(--font-body);
@@ -51,4 +156,16 @@
 .wp-content ol {
   padding-left: 1.5rem;
   margin-bottom: 1.25rem;
+}
+
+/* Evita desbordes horizontales en móvil con contenido ancho de WordPress */
+.wp-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.wp-content iframe,
+.wp-content video {
+  max-width: 100%;
 }

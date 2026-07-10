@@ -1,15 +1,21 @@
 ---
 import Base from "../layouts/Base.astro";
 import Newsletter from "../components/Newsletter";
+import RightRail from "../components/RightRail";
 import { HeroNews, FeatureNews, NewsRow, PanelNews } from "../components/cards";
 import { getPosts } from "../lib/wordpress";
 
 const posts = await getPosts({ perPage: 20 });
 
+// Orden de la portada según el mockup (nodo 6:8):
+// 2 mini cards → divisor → destacada "Local" → nota principal →
+// parrilla de mini cards → publicidad → panel azul → newsletter.
+// A la derecha: reels, clima y publicidad; a la izquierda: banner vertical.
 const hero = posts[0];
 const feature = posts[1];
-const topRows = posts.slice(2, 8);
-const panel = posts.slice(8, 11);
+const topRows = posts.slice(2, 4);
+const midRows = posts.slice(4, 16);
+const panel = posts.slice(16, 19);
 ---
 
 <Base>
@@ -28,58 +34,71 @@ const panel = posts.slice(8, 11);
       </main>
     ) : (
       <>
-        <main class="mx-auto max-w-360 px-6 py-10 lg:px-12">
-          <div class="grid gap-10 lg:grid-cols-[116px_1fr]">
+        <main class="mx-auto max-w-360 px-4 py-8 sm:px-6 md:py-10 lg:px-12">
+          <div class="grid gap-10 lg:grid-cols-[116px_1fr_286px]">
             {/* Publicidad lateral izquierda */}
             <aside class="hidden lg:block">
-              <div class="sticky top-6 flex h-150 items-center justify-center rounded-xl bg-n33-ad">
+              <div class="flex h-70 items-center justify-center rounded-xl bg-n33-ad">
+                <span class="text-lg">Publicidad</span>
+              </div>
+              <div class="mt-8 flex h-150 items-center justify-center rounded-xl bg-n33-ad">
                 <span class="text-lg">Publicidad</span>
               </div>
             </aside>
 
+            {/* Columna central */}
             <div>
-              {/* Noticias de relevancia media alta */}
+              {/* Dos mini cards de relevancia media alta */}
               {topRows.length > 0 && (
-                <section class="grid gap-x-12 gap-y-8 md:grid-cols-2">
-                  {topRows.map((post) => (
-                    <NewsRow post={post} />
+                <section class="grid gap-x-12 gap-y-6 md:grid-cols-2 md:gap-y-8">
+                  {topRows.map((post, i) => (
+                    <NewsRow post={post} delay={i * 80} />
                   ))}
                 </section>
               )}
 
+              <hr class="my-8 border-n33-text/40 md:my-10" />
+
               {/* Destacada de sección (Local) */}
               {feature && (
-                <section class="mt-12">
+                <section>
                   <FeatureNews post={feature} />
                 </section>
               )}
 
-              <hr class="my-12 border-n33-text/40" />
+              {/* Nota principal */}
+              {hero && (
+                <div class="mt-10 md:mt-14">
+                  <HeroNews post={hero} />
+                </div>
+              )}
 
-              {/* Noticia principal + columna derecha */}
-              <div class="grid gap-10 lg:grid-cols-[1fr_253px]">
-                {hero && <HeroNews post={hero} />}
-                <aside class="flex flex-col gap-8">
-                  <div class="flex h-92 items-center justify-center rounded-xl bg-n33-ad">
-                    <span class="text-lg">Publicidad</span>
-                  </div>
-                </aside>
-              </div>
+              {/* Parrilla de mini cards posterior a la nota principal */}
+              {midRows.length > 0 && (
+                <section class="mt-10 grid gap-x-12 gap-y-6 md:mt-14 md:grid-cols-2 md:gap-y-8">
+                  {midRows.map((post, i) => (
+                    <NewsRow post={post} delay={(i % 2) * 80} />
+                  ))}
+                </section>
+              )}
 
               {/* Publicidad horizontal */}
-              <div class="mt-14 flex h-36.25 items-center justify-center rounded-xl bg-n33-ad">
+              <div class="mt-10 flex h-24 items-center justify-center rounded-xl bg-n33-ad md:mt-14 md:h-36.25">
                 <span class="text-lg">Publicidad</span>
               </div>
             </div>
+
+            {/* Carril derecho: reels, clima y publicidad */}
+            <RightRail />
           </div>
         </main>
 
         {/* Panel azul: relevancia media baja */}
         {panel.length > 0 && (
-          <section class="mx-auto max-w-327.5 px-6 pb-14">
-            <div class="flex flex-col gap-12 rounded-[41px] bg-n33-blue px-8 py-12 md:px-20">
-              {panel.map((post) => (
-                <PanelNews post={post} />
+          <section class="mx-auto max-w-327.5 px-4 pb-10 sm:px-6 md:pb-14">
+            <div class="flex flex-col gap-8 rounded-3xl bg-n33-blue px-5 py-8 md:gap-12 md:rounded-[41px] md:px-20 md:py-12">
+              {panel.map((post, i) => (
+                <PanelNews post={post} delay={i * 100} />
               ))}
             </div>
           </section>

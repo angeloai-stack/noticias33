@@ -17,53 +17,98 @@ function fechaLarga(iso: string): string {
   }).format(new Date(iso));
 }
 
-/** Noticia principal: imagen grande, listón, titular grande y autor. */
-export function HeroNews({ post }: { post: WPPost }) {
+/** Primeros N párrafos del contenido, en texto plano. */
+function firstParagraphs(html: string, n: number): string[] {
+  const matches = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map((m) => stripHtml(m[1]))
+    .filter((t) => t.length > 0);
+  return matches.slice(0, n);
+}
+
+interface CardProps {
+  post: WPPost;
+  /** Retraso del fade-up al aparecer en pantalla, en ms (para escalonar). */
+  delay?: number;
+}
+
+function revealProps(delay?: number) {
+  return {
+    "data-reveal": true,
+    style: delay ? ({ "--reveal-delay": `${delay}ms` } as React.CSSProperties) : undefined,
+  };
+}
+
+/** Noticia principal: imagen grande con listón rosa, avatar y autor
+ *  sobrepuestos; titular grande y dos párrafos debajo (como el mockup). */
+export function HeroNews({ post, delay }: CardProps) {
+  const parrafos = firstParagraphs(post.content, 2);
+  if (parrafos.length === 0) parrafos.push(stripHtml(post.excerpt));
+
   return (
-    <article>
+    <article {...revealProps(delay)}>
       <a href={postUrl(post)} className="group block">
         {post.featuredImage && (
-          <img
-            src={post.featuredImage.source_url}
-            alt={post.featuredImage.alt_text}
-            className="aspect-[16/7] w-full object-cover"
-          />
+          <div className="relative overflow-hidden">
+            <img
+              src={post.featuredImage.source_url}
+              alt={post.featuredImage.alt_text}
+              className="aspect-video w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 md:aspect-16/7"
+            />
+            <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center gap-4 bg-linear-to-t from-black/50 to-transparent p-4">
+              {post.categories[0] && (
+                <Chip label={post.categories[0].name} variant="pink" />
+              )}
+              <span className="flex items-center gap-2.5 font-ui text-sm font-light text-white sm:text-base">
+                {post.authorAvatar && (
+                  <img
+                    src={post.authorAvatar}
+                    alt=""
+                    className="size-8 rounded-full border border-white/60 sm:size-9"
+                  />
+                )}
+                Por: {post.author}
+              </span>
+            </div>
+          </div>
         )}
-        <div className="mt-4 flex flex-wrap items-center gap-4">
-          {post.categories[0] && <Chip label={post.categories[0].name} />}
-          <span className="font-ui text-sm font-light text-n33-text">
-            Por: {post.author} · {fechaLarga(post.date)}
-          </span>
-        </div>
-        <h1 className="mt-3 font-ui text-3xl font-bold leading-tight text-black group-hover:text-n33-blue md:text-[2.6rem]">
+        <h1 className="mt-4 font-ui text-2xl font-bold leading-tight text-black transition-colors duration-300 group-hover:text-n33-blue sm:text-3xl md:text-[2.6rem]">
           {stripHtml(post.title)}
         </h1>
-        <p className="mt-4 max-w-[52rem] font-body text-sm leading-[1.55] text-black">
-          {stripHtml(post.excerpt)}
-        </p>
+        <div className="mt-4 flex flex-col gap-5">
+          {parrafos.map((texto) => (
+            <p
+              key={texto.slice(0, 40)}
+              className="max-w-208 font-body text-sm leading-[1.55] text-black"
+            >
+              {texto}
+            </p>
+          ))}
+        </div>
       </a>
     </article>
   );
 }
 
 /** Noticia destacada de sección (bloque "Local" del mockup). */
-export function FeatureNews({ post }: { post: WPPost }) {
+export function FeatureNews({ post, delay }: CardProps) {
   return (
-    <article>
+    <article {...revealProps(delay)}>
       <a
         href={postUrl(post)}
         className="group grid gap-6 md:grid-cols-[minmax(0,394px)_1fr]"
       >
         {post.featuredImage && (
-          <img
-            src={post.featuredImage.source_url}
-            alt={post.featuredImage.alt_text}
-            className="aspect-[394/341] w-full object-cover"
-          />
+          <div className="overflow-hidden">
+            <img
+              src={post.featuredImage.source_url}
+              alt={post.featuredImage.alt_text}
+              className="aspect-[394/341] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
+          </div>
         )}
         <div>
           {post.categories[0] && <Chip label={post.categories[0].name} />}
-          <h2 className="mt-3 font-ui text-[1.36rem] font-bold uppercase leading-snug text-black group-hover:text-n33-blue">
+          <h2 className="mt-3 font-ui text-lg font-bold uppercase leading-snug text-black transition-colors duration-300 group-hover:text-n33-blue sm:text-[1.36rem]">
             {stripHtml(post.title)}
           </h2>
           <p className="mt-4 font-ui text-base font-light leading-normal text-black">
@@ -76,26 +121,28 @@ export function FeatureNews({ post }: { post: WPPost }) {
 }
 
 /** Fila compacta: miniatura + listón + titular en mayúsculas + resumen. */
-export function NewsRow({ post }: { post: WPPost }) {
+export function NewsRow({ post, delay }: CardProps) {
   return (
-    <article>
+    <article {...revealProps(delay)}>
       <a
         href={postUrl(post)}
-        className="group grid grid-cols-[155px_1fr] items-start gap-4"
+        className="group grid grid-cols-[110px_1fr] items-start gap-3 sm:grid-cols-[155px_1fr] sm:gap-4"
       >
         {post.featuredImage ? (
-          <img
-            src={post.featuredImage.source_url}
-            alt={post.featuredImage.alt_text}
-            className="aspect-[155/87] w-full object-cover"
-          />
+          <div className="overflow-hidden">
+            <img
+              src={post.featuredImage.source_url}
+              alt={post.featuredImage.alt_text}
+              className="aspect-[155/87] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+            />
+          </div>
         ) : (
           <div className="aspect-[155/87] w-full bg-n33-ad" />
         )}
         <div>
           <div className="flex flex-wrap items-center gap-3">
             {post.categories[0] && <Chip label={post.categories[0].name} />}
-            <h3 className="font-ui text-sm font-bold uppercase leading-tight text-black group-hover:text-n33-blue">
+            <h3 className="font-ui text-sm font-bold uppercase leading-tight text-black transition-colors duration-300 group-hover:text-n33-blue">
               {stripHtml(post.title)}
             </h3>
           </div>
@@ -109,27 +156,29 @@ export function NewsRow({ post }: { post: WPPost }) {
 }
 
 /** Fila dentro del panel azul de relevancia media-baja (texto blanco). */
-export function PanelNews({ post }: { post: WPPost }) {
+export function PanelNews({ post, delay }: CardProps) {
   return (
-    <article>
+    <article {...revealProps(delay)}>
       <a
         href={postUrl(post)}
-        className="group grid items-start gap-8 md:grid-cols-[286px_1fr]"
+        className="group grid items-start gap-5 md:grid-cols-[286px_1fr] md:gap-8"
       >
         {post.featuredImage ? (
-          <img
-            src={post.featuredImage.source_url}
-            alt={post.featuredImage.alt_text}
-            className="aspect-[286/161] w-full object-cover"
-          />
+          <div className="overflow-hidden">
+            <img
+              src={post.featuredImage.source_url}
+              alt={post.featuredImage.alt_text}
+              className="aspect-[286/161] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+            />
+          </div>
         ) : (
           <div className="aspect-[286/161] w-full bg-white/20" />
         )}
         <div>
           {post.categories[0] && (
-            <Chip label={post.categories[0].name} light />
+            <Chip label={post.categories[0].name} variant="light" />
           )}
-          <h3 className="mt-3 font-ui text-[19px] font-bold uppercase leading-snug text-white group-hover:underline">
+          <h3 className="mt-3 font-ui text-[19px] font-bold uppercase leading-snug text-white transition-colors duration-300 group-hover:text-white/80">
             {stripHtml(post.title)}
           </h3>
           <p className="mt-3 line-clamp-4 max-w-[566px] font-body text-xs leading-[1.55] text-white">
