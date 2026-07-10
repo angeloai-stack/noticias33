@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Analytics from "@vercel/analytics/astro";
 import Header from "../components/Header";
+import NavMenu from "../components/NavMenu";
 import Footer from "../components/Footer";
 import { getPosts } from "../lib/wordpress";
 
@@ -31,6 +32,7 @@ const ticker = ultimaNota?.title.replace(/<[^>]*>/g, "");
   </head>
   <body class="bg-n33-bg font-ui text-n33-text">
     <Header ticker={ticker} />
+    <NavMenu client:load />
     <slot />
     <Footer />
   </body>

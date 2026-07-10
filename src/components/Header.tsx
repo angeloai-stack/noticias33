@@ -1,5 +1,3 @@
-import { SECTIONS } from "../lib/sections";
-
 interface HeaderProps {
   ticker?: string;
 }
@@ -51,21 +49,6 @@ export default function Header({ ticker }: HeaderProps) {
           </form>
         </div>
       </div>
-
-      {/* Menú de secciones (fijas, como en el mockup) */}
-      <nav className="bg-white shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
-        <div className="mx-auto flex max-w-360 items-center gap-8 overflow-x-auto px-6 py-3.5 lg:justify-center lg:px-12">
-          {SECTIONS.map((section) => (
-            <a
-              key={section.slug}
-              href={`/categoria/${section.slug}/`}
-              className="whitespace-nowrap text-lg font-bold text-n33-blue hover:underline"
-            >
-              {section.name}
-            </a>
-          ))}
-        </div>
-      </nav>
     </header>
   );
 }
