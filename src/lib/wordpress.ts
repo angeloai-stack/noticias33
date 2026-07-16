@@ -3,8 +3,8 @@
  * Usa la API nativa de WordPress: {WP_URL}/wp-json/wp/v2 — no requiere plugins.
  */
 
-const WP_URL = import.meta.env.WP_URL?.replace(/\/$/, "") ?? "";
-const API = `${WP_URL}/wp-json/wp/v2`;
+import { wpUrl } from "./env";
+import { categoryHref } from "./sections";
 
 export interface WPImage {
   source_url: string;
@@ -61,19 +61,20 @@ function mapPost(raw: any): WPPost {
 }
 
 async function wpFetch<T>(path: string): Promise<T | null> {
-  if (!WP_URL) {
-    console.warn("[wordpress] WP_URL no está configurada en .env");
+  const base = wpUrl();
+  if (!base) {
+    console.warn("[wordpress] WP_URL no está configurada");
     return null;
   }
   try {
-    const res = await fetch(`${API}${path}`);
+    const res = await fetch(`${base}/wp-json/wp/v2${path}`);
     if (!res.ok) {
       console.warn(`[wordpress] ${res.status} en ${path}`);
       return null;
     }
     return (await res.json()) as T;
   } catch (err) {
-    console.warn(`[wordpress] No se pudo conectar a ${API}${path}:`, err);
+    console.warn(`[wordpress] No se pudo conectar a ${base}${path}:`, err);
     return null;
   }
 }
@@ -99,23 +100,53 @@ export async function getPostBySlug(slug: string): Promise<WPPost | null> {
   return raw?.[0] ? mapPost(raw[0]) : null;
 }
 
+/** Busca noticias por texto en título y contenido. */
+export async function searchPosts(
+  query: string,
+  opts: { perPage?: number } = {},
+): Promise<WPPost[]> {
+  const term = query.trim();
+  if (!term) return [];
+  const params = new URLSearchParams({
+    _embed: "true",
+    search: term,
+    per_page: String(opts.perPage ?? 20),
+  });
+  const raw = await wpFetch<any[]>(`/posts?${params}`);
+  return raw?.map(mapPost) ?? [];
+}
+
+function mapCategory(raw: any): WPCategory {
+  return {
+    id: raw.id,
+    slug: raw.slug,
+    name: raw.name,
+    description: raw.description ?? "",
+    count: raw.count ?? 0,
+  };
+}
+
+/** Todas las categorías editoriales (sin "Uncategorized"). */
+export async function getAllCategories(): Promise<WPCategory[]> {
+  const raw = await wpFetch<any[]>(`/categories?per_page=100&hide_empty=false`);
+  return raw?.filter((c) => c.slug !== "uncategorized").map(mapCategory) ?? [];
+}
+
 /** Categorías con al menos una noticia publicada. */
 export async function getCategories(): Promise<WPCategory[]> {
   const raw = await wpFetch<any[]>(`/categories?per_page=100&hide_empty=true`);
-  return (
-    raw?.map((c) => ({
-      id: c.id,
-      slug: c.slug,
-      name: c.name,
-      description: c.description ?? "",
-      count: c.count ?? 0,
-    })) ?? []
-  );
+  return raw?.filter((c) => c.slug !== "uncategorized").map(mapCategory) ?? [];
 }
 
 export async function getCategoryBySlug(
   slug: string,
 ): Promise<WPCategory | null> {
-  const cats = await getCategories();
-  return cats.find((c) => c.slug === slug) ?? null;
+  const raw = await wpFetch<any[]>(
+    `/categories?slug=${encodeURIComponent(slug)}&hide_empty=false`,
+  );
+  return raw?.[0] ? mapCategory(raw[0]) : null;
+}
+
+export function categoryUrl(slug: string): string {
+  return categoryHref(slug, slug);
 }

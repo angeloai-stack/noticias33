@@ -36,7 +36,7 @@ html.js [data-reveal].is-visible {
   transform: none;
 }
 
-/* Ticker de noticias en movimiento continuo; se pausa al pasar el cursor */
+/* Ticker: etiqueta fija + titular en movimiento dentro del espacio restante */
 .ticker-viewport {
   overflow: hidden;
 }
@@ -46,6 +46,12 @@ html.js [data-reveal].is-visible {
   white-space: nowrap;
   padding-left: 100%;
   animation: ticker 30s linear infinite;
+  color: inherit;
+  text-decoration: none;
+}
+
+a.ticker-track:hover {
+  text-decoration: underline;
 }
 
 .ticker-viewport:hover .ticker-track {
@@ -53,6 +59,9 @@ html.js [data-reveal].is-visible {
 }
 
 @keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
   to {
     transform: translateX(-100%);
   }
@@ -95,6 +104,20 @@ html.js [data-reveal].is-visible {
     opacity: 1;
     transform: none;
   }
+}
+
+/* Carril horizontal de secciones en móvil (scroll con snap) */
+.nav-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, transparent, black 12px, black calc(100% - 24px), transparent);
+}
+
+.nav-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 /* Accesibilidad: sin movimiento para quien lo pida */

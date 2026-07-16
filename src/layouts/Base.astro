@@ -17,8 +17,11 @@ const {
   description = "Noticias 33 (N33): portal de noticias con la información más reciente.",
 } = Astro.props;
 
-const [ultimaNota] = await getPosts({ perPage: 1 });
+const [ultimaNota] = await Promise.all([
+  getPosts({ perPage: 1 }).then((posts) => posts[0]),
+]);
 const ticker = ultimaNota?.title.replace(/<[^>]*>/g, "");
+const tickerHref = ultimaNota ? `/noticias/${ultimaNota.slug}/` : undefined;
 ---
 
 <!doctype html>
@@ -35,8 +38,8 @@ const ticker = ultimaNota?.title.replace(/<[^>]*>/g, "");
     <ClientRouter />
     <Analytics />
   </head>
-  <body class="bg-n33-bg font-ui text-n33-text">
-    <Header ticker={ticker} />
+  <body class="overflow-x-hidden bg-n33-bg font-ui text-n33-text">
+    <Header ticker={ticker} tickerHref={tickerHref} />
     <NavMenu client:load />
     <slot />
     <Footer />

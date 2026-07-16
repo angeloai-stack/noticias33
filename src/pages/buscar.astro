@@ -1,0 +1,68 @@
+---
+import Base from "../layouts/Base.astro";
+import { NewsRow } from "../components/cards";
+import { searchPosts } from "../lib/wordpress";
+
+export const prerender = false;
+
+const q = Astro.url.searchParams.get("q")?.trim() ?? "";
+const posts = q ? await searchPosts(q, { perPage: 24 }) : [];
+---
+
+<Base
+  title={q ? `Buscar: ${q} — Noticias 33` : "Buscar — Noticias 33"}
+  description="Busca noticias en Noticias 33"
+>
+  <main class="mx-auto max-w-300 px-4 py-8 sm:px-6 md:py-10 lg:px-12">
+    <h1 class="text-2xl font-bold text-n33-blue md:text-3xl">Buscar noticias</h1>
+
+    <form action="/buscar" method="get" class="relative mt-6 max-w-xl">
+      <input
+        type="search"
+        name="q"
+        value={q}
+        placeholder="Palabra clave, tema o lugar..."
+        class="h-11 w-full rounded-[13px] border border-n33-ad bg-white px-4 pr-12 text-base text-n33-text focus:outline-none focus:ring-2 focus:ring-n33-blue/40"
+        required
+      />
+      <button
+        type="submit"
+        aria-label="Buscar"
+        class="absolute top-1/2 right-3 -translate-y-1/2 text-n33-pink"
+      >
+        <svg viewBox="0 0 20 20" class="size-5" fill="none" aria-hidden="true">
+          <circle cx="8.5" cy="8.5" r="5.75" stroke="currentColor" stroke-width="2"
+          ></circle>
+          <path
+            d="m13 13 4.5 4.5"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"></path>
+        </svg>
+      </button>
+    </form>
+
+    {
+      !q ? (
+        <p class="mt-8 text-n33-text/70">
+          Escribe un término para buscar en el archivo de noticias.
+        </p>
+      ) : posts.length === 0 ? (
+        <p class="mt-8 text-n33-text/70">
+          No encontramos resultados para «{q}».
+        </p>
+      ) : (
+        <section class="mt-8">
+          <p class="mb-6 text-sm text-n33-text/70">
+            {posts.length} resultado{posts.length === 1 ? "" : "s"} para «{q}»
+          </p>
+          <div class="grid gap-x-12 gap-y-6 md:grid-cols-2 md:gap-y-8">
+            {posts.map((post, i) => (
+              <NewsRow post={post} delay={(i % 6) * 80} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </main>
+</Base>

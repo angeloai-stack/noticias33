@@ -1,4 +1,5 @@
 import type { WPPost } from "../lib/wordpress";
+import { categoryHref } from "../lib/sections";
 import Chip from "./Chip";
 
 function stripHtml(html: string): string {
@@ -56,7 +57,14 @@ export function HeroNews({ post, delay }: CardProps) {
             />
             <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center gap-4 bg-linear-to-t from-black/50 to-transparent p-4">
               {post.categories[0] && (
-                <Chip label={post.categories[0].name} variant="pink" />
+                <Chip
+                  label={post.categories[0].name}
+                  variant="pink"
+                  href={categoryHref(
+                    post.categories[0].name,
+                    post.categories[0].slug,
+                  )}
+                />
               )}
               <span className="flex items-center gap-2.5 font-ui text-sm font-light text-white sm:text-base">
                 {post.authorAvatar && (
@@ -75,9 +83,9 @@ export function HeroNews({ post, delay }: CardProps) {
           {stripHtml(post.title)}
         </h1>
         <div className="mt-4 flex flex-col gap-5">
-          {parrafos.map((texto) => (
+          {parrafos.map((texto, i) => (
             <p
-              key={texto.slice(0, 40)}
+              key={`${post.id}-p-${i}`}
               className="max-w-208 font-body text-sm leading-[1.55] text-black"
             >
               {texto}
@@ -95,7 +103,7 @@ export function FeatureNews({ post, delay }: CardProps) {
     <article {...revealProps(delay)}>
       <a
         href={postUrl(post)}
-        className="group grid gap-6 md:grid-cols-[minmax(0,394px)_1fr]"
+        className="group grid gap-4 sm:gap-6 md:grid-cols-[minmax(0,394px)_1fr]"
       >
         {post.featuredImage && (
           <div className="overflow-hidden">
@@ -107,8 +115,16 @@ export function FeatureNews({ post, delay }: CardProps) {
           </div>
         )}
         <div>
-          {post.categories[0] && <Chip label={post.categories[0].name} />}
-          <h2 className="mt-3 font-ui text-lg font-bold uppercase leading-snug text-black transition-colors duration-300 group-hover:text-n33-blue sm:text-[1.36rem]">
+          {post.categories[0] && (
+            <Chip
+              label={post.categories[0].name}
+              href={categoryHref(
+                post.categories[0].name,
+                post.categories[0].slug,
+              )}
+            />
+          )}
+          <h2 className="mt-3 font-ui text-base font-bold uppercase leading-snug text-black transition-colors duration-300 group-hover:text-n33-blue sm:text-lg md:text-[1.36rem]">
             {stripHtml(post.title)}
           </h2>
           <p className="mt-4 font-ui text-base font-light leading-normal text-black">
@@ -126,7 +142,7 @@ export function NewsRow({ post, delay }: CardProps) {
     <article {...revealProps(delay)}>
       <a
         href={postUrl(post)}
-        className="group grid grid-cols-[110px_1fr] items-start gap-3 sm:grid-cols-[155px_1fr] sm:gap-4"
+        className="group grid grid-cols-[92px_1fr] items-start gap-3 sm:grid-cols-[155px_1fr] sm:gap-4"
       >
         {post.featuredImage ? (
           <div className="overflow-hidden">
@@ -139,14 +155,20 @@ export function NewsRow({ post, delay }: CardProps) {
         ) : (
           <div className="aspect-[155/87] w-full bg-n33-ad" />
         )}
-        <div>
-          <div className="flex flex-wrap items-center gap-3">
-            {post.categories[0] && <Chip label={post.categories[0].name} />}
-            <h3 className="font-ui text-sm font-bold uppercase leading-tight text-black transition-colors duration-300 group-hover:text-n33-blue">
-              {stripHtml(post.title)}
-            </h3>
-          </div>
-          <p className="mt-2 line-clamp-4 font-body text-xs leading-[1.55] text-black">
+        <div className="min-w-0">
+          {post.categories[0] && (
+            <Chip
+              label={post.categories[0].name}
+              href={categoryHref(
+                post.categories[0].name,
+                post.categories[0].slug,
+              )}
+            />
+          )}
+          <h3 className="mt-2 font-ui text-[13px] font-bold uppercase leading-tight text-black transition-colors duration-300 group-hover:text-n33-blue sm:mt-0 sm:text-sm">
+            {stripHtml(post.title)}
+          </h3>
+          <p className="mt-1.5 line-clamp-3 font-body text-xs leading-[1.5] text-black sm:mt-2 sm:line-clamp-4 sm:leading-[1.55]">
             {stripHtml(post.excerpt)}
           </p>
         </div>
@@ -161,7 +183,7 @@ export function PanelNews({ post, delay }: CardProps) {
     <article {...revealProps(delay)}>
       <a
         href={postUrl(post)}
-        className="group grid items-start gap-5 md:grid-cols-[286px_1fr] md:gap-8"
+        className="group grid items-start gap-4 sm:gap-5 md:grid-cols-[286px_1fr] md:gap-8"
       >
         {post.featuredImage ? (
           <div className="overflow-hidden">
@@ -176,9 +198,16 @@ export function PanelNews({ post, delay }: CardProps) {
         )}
         <div>
           {post.categories[0] && (
-            <Chip label={post.categories[0].name} variant="light" />
+            <Chip
+              label={post.categories[0].name}
+              variant="light"
+              href={categoryHref(
+                post.categories[0].name,
+                post.categories[0].slug,
+              )}
+            />
           )}
-          <h3 className="mt-3 font-ui text-[19px] font-bold uppercase leading-snug text-white transition-colors duration-300 group-hover:text-white/80">
+          <h3 className="mt-2 font-ui text-base font-bold uppercase leading-snug text-white transition-colors duration-300 group-hover:text-white/80 sm:mt-3 sm:text-[19px]">
             {stripHtml(post.title)}
           </h3>
           <p className="mt-3 line-clamp-4 max-w-[566px] font-body text-xs leading-[1.55] text-white">

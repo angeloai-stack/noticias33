@@ -49,7 +49,7 @@ export default function Footer() {
           />
         </div>
 
-        <div className="mt-8 flex flex-wrap justify-between gap-2 text-sm font-light sm:text-base md:mt-10 md:text-[1.1rem]">
+        <div className="mt-8 flex flex-col gap-2 text-sm font-light sm:flex-row sm:flex-wrap sm:justify-between sm:gap-2 sm:text-base md:mt-10 md:text-[1.1rem]">
           <span>® Noticias 33 · www.noticias33.com · {year}</span>
           <span>Todos los derechos reservados</span>
         </div>

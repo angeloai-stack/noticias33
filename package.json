@@ -9,10 +9,14 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check:config": "node scripts/check-config.mjs",
+    "setup:vercel-env": "node scripts/push-vercel-env.mjs",
+    "setup:vercel-env:ps": "powershell -ExecutionPolicy Bypass -File scripts/push-vercel-env.ps1"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.1",
+    "@astrojs/vercel": "^11.0.3",
     "@tailwindcss/vite": "^4.3.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",

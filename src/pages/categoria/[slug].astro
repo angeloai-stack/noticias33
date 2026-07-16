@@ -1,57 +1,76 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { NewsRow } from "../../components/cards";
-import { SECTIONS, normalize, type Section } from "../../lib/sections";
-import { getCategories, getPosts, type WPPost } from "../../lib/wordpress";
+import { SECTIONS, normalize } from "../../lib/sections";
+import {
+  getAllCategories,
+  getCategoryBySlug,
+  getPosts,
+} from "../../lib/wordpress";
 
-export async function getStaticPaths() {
-  const wpCategories = await getCategories();
-  return Promise.all(
-    SECTIONS.map(async (section) => {
-      const match = wpCategories.find(
-        (c) =>
-          normalize(c.slug) === normalize(section.slug) ||
-          normalize(c.name) === normalize(section.name),
-      );
-      const posts = match
-        ? await getPosts({ categoryId: match.id, perPage: 24 })
-        : [];
-      return {
-        params: { slug: section.slug },
-        props: { section, posts, description: match?.description ?? "" },
-      };
-    }),
+export const prerender = false;
+
+const slug = Astro.params.slug ?? "";
+const section = SECTIONS.find((item) => item.slug === slug);
+const wpCategory = section ? null : await getCategoryBySlug(slug);
+
+if (!section && !wpCategory) {
+  Astro.response.status = 404;
+}
+
+let title = section?.name ?? wpCategory?.name ?? "Categoría no encontrada";
+let description = wpCategory?.description ?? "";
+let posts: Awaited<ReturnType<typeof getPosts>> = [];
+
+if (section) {
+  const wpCategories = await getAllCategories();
+  const match = wpCategories.find(
+    (c) =>
+      normalize(c.slug) === normalize(section.slug) ||
+      normalize(c.name) === normalize(section.name),
   );
+  description = match?.description ?? "";
+  posts = match ? await getPosts({ categoryId: match.id, perPage: 24 }) : [];
+} else if (wpCategory) {
+  posts = await getPosts({ categoryId: wpCategory.id, perPage: 24 });
 }
-
-interface Props {
-  section: Section;
-  posts: WPPost[];
-  description: string;
-}
-
-const { section, posts, description } = Astro.props;
 ---
 
-<Base title={`${section.name} — Noticias 33`} description={description}>
-  <main class="mx-auto max-w-300 px-4 py-8 sm:px-6 md:py-10 lg:px-12">
-    <h1
-      class="inline-block bg-n33-blue px-5 py-1.5 text-xl font-bold uppercase text-white [clip-path:polygon(0_0,100%_0,calc(100%-16px)_100%,0_100%)] md:text-2xl"
-    >
-      {section.name}
-    </h1>
-    {
-      posts.length === 0 ? (
-        <p class="mt-8 text-n33-text/70">
-          Todavía no hay noticias en esta sección.
+{
+  !section && !wpCategory ? (
+    <Base title="No encontrado — Noticias 33">
+      <main class="mx-auto max-w-300 px-4 py-16 text-center sm:px-6 lg:px-12">
+        <h1 class="text-2xl font-bold">Categoría no encontrada</h1>
+        <p class="mt-4 text-n33-text/70">
+          La sección que buscas no existe o fue movida.
         </p>
-      ) : (
-        <section class="mt-8 grid gap-x-12 gap-y-6 md:mt-10 md:grid-cols-2 md:gap-y-8">
-          {posts.map((post, i) => (
-            <NewsRow post={post} delay={(i % 6) * 80} />
-          ))}
-        </section>
-      )
-    }
-  </main>
-</Base>
+        <a class="mt-6 inline-block font-bold text-n33-blue underline" href="/">
+          Volver al inicio
+        </a>
+      </main>
+    </Base>
+  ) : (
+    <Base title={`${title} — Noticias 33`} description={description}>
+      <main class="mx-auto max-w-300 px-4 py-8 sm:px-6 md:py-10 lg:px-12">
+        <h1
+          class="inline-block bg-n33-blue px-5 py-1.5 text-xl font-bold uppercase text-white [clip-path:polygon(0_0,100%_0,calc(100%-16px)_100%,0_100%)] md:text-2xl"
+        >
+          {title}
+        </h1>
+        {
+          posts.length === 0 ? (
+            <p class="mt-8 text-n33-text/70">
+              Todavía no hay noticias en esta sección.
+            </p>
+          ) : (
+            <section class="mt-8 grid gap-x-12 gap-y-6 md:mt-10 md:grid-cols-2 md:gap-y-8">
+              {posts.map((post, i) => (
+                <NewsRow post={post} delay={(i % 6) * 80} />
+              ))}
+            </section>
+          )
+        }
+      </main>
+    </Base>
+  )
+}

@@ -9,7 +9,6 @@ import { SECTIONS } from "../lib/sections";
 export default function NavMenu() {
   const [open, setOpen] = useState(false);
 
-  // El botón hamburguesa del header (estático) también abre/cierra el menú
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if ((e.target as HTMLElement).closest("#n33-menu-toggle")) {
@@ -22,7 +21,7 @@ export default function NavMenu() {
 
   return (
     <nav className="bg-white font-ui shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
-      <div className="mx-auto flex max-w-360 items-start gap-4 px-4 py-3 sm:gap-8 sm:px-6 sm:py-3.5 lg:px-12">
+      <div className="mx-auto flex max-w-360 items-start gap-3 px-4 py-3 sm:gap-5 sm:px-6 sm:py-5 lg:gap-8 lg:px-12">
         <button
           type="button"
           onClick={() => setOpen(!open)}
@@ -33,20 +32,20 @@ export default function NavMenu() {
           }`}
         >
           {open ? (
-            <svg viewBox="0 0 24 24" className="size-6" aria-hidden="true">
-              <circle cx="12" cy="12" r="12" fill="var(--color-n33-pink)" />
+            <svg viewBox="0 0 28 28" className="size-6 sm:size-7 md:size-8" aria-hidden="true">
+              <circle cx="14" cy="14" r="14" fill="var(--color-n33-pink)" />
               <path
-                d="M8 8l8 8M16 8l-8 8"
+                d="M9 9l10 10M19 9L9 19"
                 stroke="#fff"
                 strokeWidth="2.5"
                 strokeLinecap="round"
               />
             </svg>
           ) : (
-            <svg viewBox="0 0 24 24" className="size-6" aria-hidden="true">
-              <circle cx="12" cy="12" r="12" fill="var(--color-n33-blue)" />
+            <svg viewBox="0 0 28 28" className="size-6 sm:size-7 md:size-8" aria-hidden="true">
+              <circle cx="14" cy="14" r="14" fill="var(--color-n33-blue)" />
               <path
-                d="M12 6.5v11M6.5 12h11"
+                d="M14 8v12M8 14h12"
                 stroke="#fff"
                 strokeWidth="2.5"
                 strokeLinecap="round"
@@ -56,12 +55,12 @@ export default function NavMenu() {
         </button>
 
         {open ? (
-          <div className="menu-panel-enter grid flex-1 grid-cols-2 gap-x-4 gap-y-6 pb-4 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-8 lg:grid-cols-9">
+          <div className="menu-panel-enter grid flex-1 grid-cols-1 gap-x-4 gap-y-5 pb-2 min-[420px]:grid-cols-2 sm:grid-cols-3 sm:gap-y-8 lg:grid-cols-9">
             {SECTIONS.map((section) => (
               <div key={section.slug}>
                 <a
                   href={`/categoria/${section.slug}/`}
-                  className="link-underline text-base font-bold text-n33-blue sm:text-lg"
+                  className="link-underline text-base font-bold text-n33-blue sm:text-lg md:text-xl"
                 >
                   {section.name}
                 </a>
@@ -70,7 +69,7 @@ export default function NavMenu() {
                     <li key={sub}>
                       <a
                         href={`/categoria/${section.slug}/`}
-                        className="text-sm leading-tight text-n33-blue transition-colors duration-200 hover:text-n33-pink sm:text-[15px]"
+                        className="text-[15px] leading-tight text-n33-blue transition-colors duration-200 hover:text-n33-pink md:text-base"
                       >
                         {sub}
                       </a>
@@ -81,12 +80,12 @@ export default function NavMenu() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-1 items-center gap-6 overflow-x-auto scrollbar-none sm:gap-8 lg:justify-center">
+          <div className="nav-scroll flex min-h-9 flex-1 items-center gap-5 sm:min-h-10 sm:gap-7 lg:justify-center lg:gap-10">
             {SECTIONS.map((section) => (
               <a
                 key={section.slug}
                 href={`/categoria/${section.slug}/`}
-                className="link-underline whitespace-nowrap text-base font-bold text-n33-blue sm:text-lg"
+                className="link-underline shrink-0 snap-start whitespace-nowrap text-base font-bold text-n33-blue sm:text-lg md:text-xl"
               >
                 {section.name}
               </a>

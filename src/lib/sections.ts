@@ -140,3 +140,24 @@ export function findSection(nameOrSlug: string): Section | undefined {
     (s) => normalize(s.name) === target || normalize(s.slug) === target,
   );
 }
+
+/** Enlace de categoría alineado al menú del mockup (si hay sección equivalente). */
+export function sectionHref(nameOrSlug: string): string | undefined {
+  const section = findSection(nameOrSlug);
+  return section ? `/categoria/${section.slug}/` : undefined;
+}
+
+/** Slug URL para categorías de WordPress sin sección Figma equivalente. */
+export function wpCategorySlug(nameOrSlug: string): string {
+  return nameOrSlug
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** Enlace a página de categoría (sección Figma o categoría WP directa). */
+export function categoryHref(nameOrSlug: string, wpSlug?: string): string {
+  return sectionHref(nameOrSlug) ?? `/categoria/${wpSlug ?? wpCategorySlug(nameOrSlug)}/`;
+}
