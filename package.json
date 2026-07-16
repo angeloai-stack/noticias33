@@ -15,6 +15,7 @@
     "setup:vercel-env:ps": "powershell -ExecutionPolicy Bypass -File scripts/push-vercel-env.ps1"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.9",
     "@astrojs/react": "^6.0.1",
     "@astrojs/vercel": "^11.0.3",
     "@tailwindcss/vite": "^4.3.2",
@@ -24,6 +25,10 @@
     "astro": "^7.0.7",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "tailwindcss": "^4.3.2"
+    "tailwindcss": "^4.3.2",
+    "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1"
   }
 }

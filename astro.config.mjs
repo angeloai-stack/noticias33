@@ -13,7 +13,7 @@ export default defineConfig({
 
   env: {
     schema: {
-      WP_URL: envField.string({ context: "server", access: "secret" }),
+      WP_URL: envField.string({ context: "server", access: "secret", optional: true }),
       WP_USER: envField.string({ context: "server", access: "secret", optional: true }),
       WP_APP_PASSWORD: envField.string({
         context: "server",

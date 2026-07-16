@@ -128,7 +128,35 @@ Cada sección se enlaza con la categoría de WordPress cuyo nombre o slug coinci
    npm run setup:vercel-env
    ```
 
-**Importante:** las variables deben existir en Vercel antes del deploy. Sin `WP_URL` el sitio muestra "No se pudieron cargar noticias".
+**Importante:** las variables deben existir en Vercel antes del deploy. Sin `WP_URL` el sitio responde **HTTP 500** (`EnvInvalidVariables: WP_URL is missing` en los logs).
+
+### Variables en Vercel (manual)
+
+Si `npm run setup:vercel-env` falla por token expirado, agrégalas en el dashboard:
+
+[Environment Variables → noticias33](https://vercel.com/property-dreamz-s-projects/noticias33/settings/environment-variables)
+
+| Variable | Entornos |
+| --- | --- |
+| `WP_URL` | Production, Preview, Development |
+| `WP_USER` | Production, Preview, Development |
+| `WP_APP_PASSWORD` | Production, Preview, Development |
+| `ACCESS_CODE` | Production, Preview, Development |
+| `ADMIN_CODE` | Production, Preview, Development |
+| `SUPABASE_URL` | Production, Preview, Development |
+| `SUPABASE_SERVICE_KEY` | Production, Preview, Development |
+
+Copia los valores de tu `.env` local. Después de guardarlas, ve a **Deployments → Redeploy** (las variables nuevas no aplican a deploys anteriores).
+
+### Error 500 en producción
+
+Si ves *"Esta página no funciona"* con HTTP 500:
+
+```bash
+npx vercel logs noticias33.vercel.app --json
+```
+
+Causa habitual: `WP_URL is missing`. Agrega las variables arriba y redeploy.
 
 ## Estructura del proyecto
 
