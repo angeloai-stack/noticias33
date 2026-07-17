@@ -3,9 +3,7 @@ $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot\..
 
 $keys = @(
-  "WP_URL", "WP_USER", "WP_APP_PASSWORD",
-  "SUPABASE_URL", "SUPABASE_SERVICE_KEY",
-  "ACCESS_CODE", "ADMIN_CODE"
+  "STRAPI_URL", "STRAPI_TOKEN", "STRAPI_ADMIN_URL"
 )
 
 if (-not (Test-Path ".env")) { throw "No existe .env" }

@@ -7,7 +7,7 @@ import {
   categoryUrl,
   getCategoryBySlug,
   getPosts,
-} from "../lib/wordpress";
+} from "../lib/strapi";
 
 const [posts, gobiernoCat, politicaCat] = await Promise.all([
   getPosts({ perPage: 20 }),
@@ -39,10 +39,11 @@ const latestPosts = posts.slice(0, 6);
         <div class="border border-n33-ad bg-white p-12 text-center">
           <h1 class="text-2xl font-bold">Noticias 33 está casi listo</h1>
           <p class="mt-4">
-            No se pudieron cargar noticias desde WordPress. Verifica que la
-            variable <code class="bg-n33-bg px-1">WP_URL</code> del archivo
-            <code class="bg-n33-bg px-1">.env</code> apunte a tu instalación de
-            WordPress y que existan entradas publicadas.
+            No se pudieron cargar noticias desde Strapi. Verifica que
+            <code class="bg-n33-bg px-1">STRAPI_URL</code> y
+            <code class="bg-n33-bg px-1">STRAPI_TOKEN</code> estén en tu
+            <code class="bg-n33-bg px-1">.env</code> y que existan noticias
+            publicadas en el panel de Strapi.
           </p>
         </div>
       </main>

@@ -11,6 +11,13 @@
     "preview": "astro preview",
     "astro": "astro",
     "check:config": "node scripts/check-config.mjs",
+    "cms:dev": "npm run develop --prefix cms",
+    "cms:build": "npm run build --prefix cms",
+    "cms:export": "npm run export --prefix cms -- --no-encrypt -f ../backups/n33-backup",
+    "cms:import": "npm run import --prefix cms -- -f ../backups/n33-backup.tar.gz",
+    "cms:test-db": "node scripts/test-supabase-db.mjs",
+    "postgres:up": "docker compose -f docker-compose.postgres.yml up -d",
+    "postgres:down": "docker compose -f docker-compose.postgres.yml down",
     "setup:vercel-env": "node scripts/push-vercel-env.mjs",
     "setup:vercel-env:ps": "powershell -ExecutionPolicy Bypass -File scripts/push-vercel-env.ps1"
   },

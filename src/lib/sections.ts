@@ -1,7 +1,7 @@
 /**
  * Secciones fijas del sitio, tal como aparecen en el mockup de Figma
  * (menú superior, nodo 48:156). Cada una tiene su página /categoria/{slug}/
- * y se llena con la categoría de WordPress cuyo nombre o slug coincida.
+ * y se llena con la categoría de Strapi cuyo nombre o slug coincida.
  */
 
 export interface Section {
@@ -133,7 +133,7 @@ export function normalize(value: string): string {
     .replace(/[^a-z0-9]+/g, "");
 }
 
-/** Sección que corresponde a un nombre o slug (de WordPress), si existe. */
+/** Sección que corresponde a un nombre o slug de categoría Strapi, si existe. */
 export function findSection(nameOrSlug: string): Section | undefined {
   const target = normalize(nameOrSlug);
   return SECTIONS.find(
@@ -147,7 +147,7 @@ export function sectionHref(nameOrSlug: string): string | undefined {
   return section ? `/categoria/${section.slug}/` : undefined;
 }
 
-/** Slug URL para categorías de WordPress sin sección Figma equivalente. */
+/** Slug URL para categorías de Strapi sin sección Figma equivalente. */
 export function wpCategorySlug(nameOrSlug: string): string {
   return nameOrSlug
     .normalize("NFD")

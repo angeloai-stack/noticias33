@@ -1,4 +1,4 @@
-import type { WPPost } from "../lib/wordpress";
+import type { Article } from "../lib/content";
 import { categoryHref } from "../lib/sections";
 import Chip from "./Chip";
 
@@ -6,7 +6,7 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, "").trim();
 }
 
-function postUrl(post: WPPost): string {
+function postUrl(post: Article): string {
   return `/noticias/${post.slug}/`;
 }
 
@@ -27,7 +27,7 @@ function firstParagraphs(html: string, n: number): string[] {
 }
 
 interface CardProps {
-  post: WPPost;
+  post: Article;
   /** Retraso del fade-up al aparecer en pantalla, en ms (para escalonar). */
   delay?: number;
 }

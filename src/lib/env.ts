@@ -1,28 +1,18 @@
-import {
-  WP_URL,
-  WP_USER,
-  WP_APP_PASSWORD,
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY,
-  ACCESS_CODE,
-  ADMIN_CODE,
-} from "astro:env/server";
+import { STRAPI_URL, STRAPI_ADMIN_URL } from "astro:env/server";
 
-const ASTRO_ENV: Record<string, string | undefined> = {
-  WP_URL,
-  WP_USER,
-  WP_APP_PASSWORD,
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY,
-  ACCESS_CODE,
-  ADMIN_CODE,
-};
-
-/** Lee variables de entorno en runtime (Vercel) y en desarrollo (.env). */
+/** STRAPI_TOKEN se lee de process.env (puede estar vacío con permisos Public). */
 export function env(name: string): string | undefined {
-  return ASTRO_ENV[name] ?? process.env[name];
+  if (name === "STRAPI_URL") return STRAPI_URL ?? process.env.STRAPI_URL;
+  if (name === "STRAPI_ADMIN_URL") {
+    return STRAPI_ADMIN_URL ?? process.env.STRAPI_ADMIN_URL;
+  }
+  return process.env[name];
 }
 
-export function wpUrl(): string {
-  return (env("WP_URL") ?? "").replace(/\/$/, "");
+export function strapiUrl(): string {
+  return (env("STRAPI_URL") ?? "").replace(/\/$/, "");
+}
+
+export function strapiAdminUrl(): string {
+  return (env("STRAPI_ADMIN_URL") ?? `${strapiUrl()}/admin`).replace(/\/$/, "");
 }

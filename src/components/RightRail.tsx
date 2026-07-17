@@ -1,5 +1,5 @@
 import Chip from "./Chip";
-import type { WPPost } from "../lib/wordpress";
+import type { Article } from "../lib/content";
 import { categoryHref } from "../lib/sections";
 
 function stripHtml(html: string): string {
@@ -7,7 +7,7 @@ function stripHtml(html: string): string {
 }
 
 interface RightRailProps {
-  latestPosts?: WPPost[];
+  latestPosts?: Article[];
 }
 
 /**

@@ -19,14 +19,11 @@ function loadEnv() {
 }
 
 const env = loadEnv();
-const required = ["WP_URL", "WP_USER", "WP_APP_PASSWORD", "ACCESS_CODE", "ADMIN_CODE"];
-const optional = ["SUPABASE_URL", "SUPABASE_SERVICE_KEY"];
-
 let ok = true;
 
 console.log("=== N33 — verificación de configuración ===\n");
 
-for (const key of required) {
+for (const key of ["STRAPI_URL"]) {
   if (!env[key]) {
     console.log(`✗ Falta ${key} en .env`);
     ok = false;
@@ -35,56 +32,44 @@ for (const key of required) {
   }
 }
 
-for (const key of optional) {
-  console.log(env[key] ? `✓ ${key}` : `○ ${key} (opcional, necesario para /admin)`);
-}
-
-const wpUrl = env.WP_URL?.replace(/\/$/, "");
-if (wpUrl) {
-  try {
-    const res = await fetch(`${wpUrl}/wp-json/wp/v2/posts?per_page=1`);
-    console.log(res.ok ? `\n✓ WordPress API responde (${res.status})` : `\n✗ WordPress API error ${res.status}`);
-    if (!res.ok) ok = false;
-  } catch (e) {
-    console.log(`\n✗ No se pudo conectar a WordPress: ${e.message}`);
-    ok = false;
-  }
-
-  if (env.WP_USER && env.WP_APP_PASSWORD) {
-    const auth = Buffer.from(`${env.WP_USER}:${env.WP_APP_PASSWORD}`).toString("base64");
-    const res = await fetch(`${wpUrl}/wp-json/wp/v2/users/me`, {
-      headers: { Authorization: `Basic ${auth}` },
-    });
-    console.log(
-      res.ok
-        ? "✓ Credenciales WordPress válidas (publicación habilitada)"
-        : `✗ Credenciales WordPress inválidas (${res.status})`,
-    );
-    if (!res.ok) ok = false;
-  }
-}
-
-if (env.SUPABASE_URL && env.SUPABASE_SERVICE_KEY) {
-  const res = await fetch(
-    `${env.SUPABASE_URL.replace(/\/$/, "")}/rest/v1/publicaciones_log?select=id&limit=1`,
-    {
-      headers: {
-        apikey: env.SUPABASE_SERVICE_KEY,
-        Authorization: `Bearer ${env.SUPABASE_SERVICE_KEY}`,
-      },
-    },
-  );
-  if (res.ok) {
-    console.log("✓ Supabase conectado (tabla publicaciones_log accesible)");
-  } else {
-    const body = await res.text();
-    console.log(`✗ Supabase error ${res.status}: ${body.slice(0, 120)}`);
-    console.log("  → Ejecuta supabase/schema.sql en el SQL Editor de Supabase");
-    ok = false;
-  }
+if (env.STRAPI_TOKEN) {
+  console.log("✓ STRAPI_TOKEN");
 } else {
-  console.log("\n○ Supabase no configurado — /admin no mostrará historial");
+  console.log("○ STRAPI_TOKEN (opcional con permisos Public activos)");
 }
 
-console.log(ok ? "\n✓ Configuración lista" : "\n✗ Revisa los puntos marcados arriba");
+const strapiUrl = env.STRAPI_URL?.replace(/\/$/, "");
+if (strapiUrl) {
+  try {
+    const headers = { Accept: "application/json" };
+    if (env.STRAPI_TOKEN) {
+      headers.Authorization = `Bearer ${env.STRAPI_TOKEN}`;
+    }
+    const res = await fetch(
+      `${strapiUrl}/api/noticias?pagination[pageSize]=1&populate[0]=categoria`,
+      { headers },
+    );
+    if (res.ok) {
+      console.log(`\n✓ Strapi API responde (${res.status})`);
+    } else if (res.status === 403) {
+      console.log(
+        `\n⚠ Strapi responde 403 — activa permisos Public en Noticia/Categoría`,
+      );
+      console.log("  → Settings → Users & Permissions → Roles → Public");
+    } else {
+      console.log(`\n✗ Strapi API error ${res.status}`);
+      ok = false;
+    }
+  } catch (e) {
+    console.log(`\n✗ No se pudo conectar a Strapi: ${e.message}`);
+    console.log("  → ¿Está corriendo? cd cms && npm run develop");
+    ok = false;
+  }
+}
+
+console.log(
+  ok
+    ? "\n✓ Configuración lista"
+    : "\n✗ Revisa los puntos marcados arriba (ver docs/STRAPI.md)",
+);
 process.exit(ok ? 0 : 1);

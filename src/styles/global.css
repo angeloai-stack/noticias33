@@ -138,7 +138,7 @@ a.ticker-track:hover {
   }
 }
 
-/* Contenido HTML que llega renderizado desde WordPress */
+/* Contenido HTML renderizado desde Strapi (rich text) */
 .wp-content {
   font-family: var(--font-body);
   font-size: 1.05rem;
@@ -181,7 +181,7 @@ a.ticker-track:hover {
   margin-bottom: 1.25rem;
 }
 
-/* Evita desbordes horizontales en móvil con contenido ancho de WordPress */
+/* Evita desbordes horizontales en móvil con contenido ancho del CMS */
 .wp-content table {
   display: block;
   max-width: 100%;

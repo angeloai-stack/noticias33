@@ -6,15 +6,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const PROJECT_ID = "prj_isaQ80b1maP9IgLsVCrvFLPx1nn7";
 const TEAM_ID = "team_PqvoXmKKJlzPJzRUApWzla1m";
 
-const KEYS = [
-  "WP_URL",
-  "WP_USER",
-  "WP_APP_PASSWORD",
-  "SUPABASE_URL",
-  "SUPABASE_SERVICE_KEY",
-  "ACCESS_CODE",
-  "ADMIN_CODE",
-];
+const KEYS = ["STRAPI_URL", "STRAPI_TOKEN", "STRAPI_ADMIN_URL"];
 
 const TARGETS = ["production", "preview", "development"];
 

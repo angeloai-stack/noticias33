@@ -1,0 +1,18 @@
+# PostgreSQL local opcional para probar antes de producción
+# Uso: docker compose -f docker-compose.postgres.yml up -d
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: n33-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: n33
+      POSTGRES_PASSWORD: n33_local_dev
+      POSTGRES_DB: n33_cms
+    ports:
+      - "5432:5432"
+    volumes:
+      - n33_pg_data:/var/lib/postgresql/data
+
+volumes:
+  n33_pg_data:
